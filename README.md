@@ -16,5 +16,5 @@ Welcome to the repository for our Restaurant Application MVP project. Below are 
 
 \* \*\*Screenshots:\*\* Available in the `screenshots/` folder.
 
-\* \*\*Demo Video Link:\*\* https://drive.google.com/file/d/16zTjYgWOk5Yq6\_mnBJUsiBhPXiyWd7q0/view?usp=sharing
+\* \*\*Demo Video Link:\*\* https://drive.google.com/file/d/1SO\_dl7moNfCrrV4LmVjUBzeBTqGTzlyK/view?usp=drive\_link
 
