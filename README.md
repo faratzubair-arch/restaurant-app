@@ -1,46 +1,138 @@
-Markdown# Restaurant App with Server and Database (Assignment 2) - Fall 2026
+# Restaurant App MVP (Full-Stack Mobile Application)
 
-Welcome to the **Restaurant App (MVP - Phase 2)** repository! This project upgrades our previous mock-data React Native application into a fully robust, client-server architecture powered by **Node.js, Express, and MongoDB**, complete with user authentication (JWT), secure backend validation, real-time polling updates, and manager dashboards.
+A comprehensive full-stack restaurant mobile application built with **React Native, Expo, Node.js, Express.js, and MongoDB**, featuring role-based authentication, menu browsing, cart state management, and table reservations.
 
 ---
 
-## 👥 Student Information
+## 👤 Student Information
+
 * **Name:** Farat Zubair
 * **Course:** Artificial Intelligence (AI)
-* **Repository:** `restaurant-app-mvp`
+* **Repository:** [restaurant-app-mvp](https://github.com/faratzubair-arch/restaurant-app-mvp)
 
 ---
 
-## 📁 Repository Structure
-```text
+## 🎥 Project Demonstration Video & Screen Recording Note
+* **Screen Recording Link:** 👉 **[Watch & Download Project Walkthrough Video (Google Drive)](https://drive.google.com/file/d/1DSl_rUCJ0lOi5LNkvI9YeXeW1QdQF3ZI/view?usp=sharing)**
+* **GitHub Size Limit Handling:** During the project upload, a heavy screen recording file (`Recording 2026-10-11 210411.mp4` exceeding 160 MB) caused a push failure due to GitHub's strict **100 MB per-file size limit**[cite: 8]. To resolve this, the video file was removed from Git tracking and history, added to `.gitignore`, and securely hosted on **Google Drive** for evaluation while keeping the repository clean and optimized.
+
+---
+
+## 🔑 Seeded Credentials
+
+You can use the following default credentials to test customer and manager roles in the application:
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Customer** | `customer@test.com` | `Password1` |
+| **Manager** | `manager@test.com` | `Password1` |
+
+---
+
+## 📡 API Endpoints
+
+### Authentication
+| Method | Endpoint | Access | Request Body | Response |
+| :--- | :--- | :--- | :--- | :--- |
+| **POST** | `/api/auth/register` | Public | `name, email, password` | User object & JWT token |
+| **POST** | `/api/auth/login` | Public | `email, password` | User info & JWT token |
+
+### Menu & Orders
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/menu` | Public | Fetch all available menu items |
+| **POST** | `/api/orders` | Private (Customer) | Place a new food order |
+| **GET** | `/api/orders` | Private (Manager) | View all restaurant orders |
+
+### Tables & Reservations
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/tables` | Private | Check available restaurant tables |
+| **POST** | `/api/reservations` | Private (Customer) | Reserve a table |
+
+---
+
+## ❓ Project Question-by-Question (Q/Q) & Feature Breakdown
+
+* **Q1: What is the primary objective of the Restaurant App?**
+  * **Answer:** The application provides a complete full-stack mobile platform where users can browse menus, add items to a cart, reserve tables, and managers can efficiently handle restaurant operations.
+
+* **Q2: Which technologies (Tech Stack) are used in this project?**
+  * **Frontend:** React Native and Expo framework for cross-platform mobile user interfaces.
+  * **Backend:** Node.js and Express.js for RESTful APIs and server-side business logic.
+  * **Database:** MongoDB and Mongoose ODM for handling structured database schemas (User, MenuItem, Order, Table, Reservation).
+
+* **Q3: How are authentication and authorization implemented?**
+  * **Answer:** The system uses JSON Web Tokens (JWT) for secure role-based authentication, separating access levels and middleware restrictions between customers and managers.
+
+* **Q4: Why was there an issue pushing the video recording to GitHub, and how was it resolved?**
+  * **Answer:** GitHub enforces a strict **100 MB** file size limit, and the local recording file was approximately **161.81 MB**[cite: 8]. This was resolved by removing the file from Git tracking/history, updating the `.gitignore` configuration, and uploading the full walkthrough video to Google Drive.
+
+---
+
+## 📂 Repository Structure
+
+```txt
 restaurant-app-mvp/
 ├── server/
-│   ├── config/          # Database connection (db.js)
-│   ├── controllers/     # Business logic for auth, menu, orders, reservations, tables
-│   ├── middleware/      # JWT authentication and role-based authorization (authMiddleware.js)
-│   ├── models/          # Mongoose schemas (User, MenuItem, Table, Reservation, Order)
-│   ├── routes/          # Express route definitions
-│   ├── server.js        # Entry point for the backend server
-│   └── seed.js          # Database seeding script
+│   ├── config/       # Database connection (db.js)
+│   ├── controllers/  # Business logic for auth, menu, orders, reservations, tables
+│   ├── middleware/   # JWT authentication and role-based authorization (authMiddleware.js)
+│   ├── models/       # Mongoose schemas (User, MenuItem, Table, Reservation, Order)
+│   ├── routes/       # Express route definitions
+│   ├── server.js     # Entry point for the backend server
+│   └── seed.js       # Database seeding script
 ├── src/
-│   ├── api/             # API client helper (client.js)
-│   ├── context/         # React context providers (Auth, Cart, Theme)
-│   ├── hooks/           # Custom React hooks (useApi.js)
-│   └── screens/         # Customer and Manager mobile screens
-├── A2/                  # Assignment 2 deliverables (SRS_v2.pdf, Postman collection, Screenshots)
-├── .env.example         # Template for environment variables
-└── README.md            # Project Documentation
-⚙️ Getting Started & Setup Instructions1. PrerequisitesNode.js (LTS) and npm installed on your laptop.MongoDB (MongoDB Atlas cluster or local MongoDB instance with Compass).Postman or Thunder Client (for API testing).Expo Go app installed on your smartphone (or Android/iOS emulator).2. Backend Setup (server folder)Open a terminal and navigate to the server directory:Bashcd server
-Install dependencies:Bashnpm install
-Create a .env file in the server folder based on .env.example:Code snippetPORT=5000
+│   ├── api/          # API client helper (client.js)
+│   ├── context/      # React context providers (Auth, Cart, Theme)
+│   ├── hooks/        # Custom React hooks (useApi.js)
+│   └── screens/      # Customer and manager mobile screens
+├── A2/               # Assignment 2 deliverables (SRS_v2.pdf, Postman collection, Screenshots)
+├── .env.example      # Template for environment variables
+└── README.md         # Project Documentation
+🚀 Getting Setup & Configuration Instructions
+1. Prerequisites
+Node.js (LTS) and npm installed on your system.
+
+MongoDB (local instance or MongoDB Atlas cloud cluster).
+
+Expo Go app installed on your physical mobile device (or an Android/iOS emulator).
+
+2. Clone the Repository
+Open your terminal and run the following commands to clone and open the project:
+
+Bash
+git clone [https://github.com/faratzubair-arch/restaurant-app-mvp.git](https://github.com/faratzubair-arch/restaurant-app-mvp.git)
+cd restaurant-app-mvp
+3. Backend Setup
+Install server dependencies:
+
+Bash
+npm install
+Create a .env file in the root directory matching .env.example with your credentials:
+
+Code snippet
+PORT=5000
 MONGO_URI=your_mongodb_connection_string_here
 JWT_SECRET=your_jwt_secret_key_here
-Seed the database with initial users, menu items, and tables:Bashnpm run seed
-Start the development server using nodemon:Bashnpm run dev
-3. Frontend Setup (src / React Native)Go back to the root folder of the project (myapp):Bashcd ..
-Open src/api/client.js and set your BASE_URL to your laptop's local IP address (both laptop and phone must be on the same Wi-Fi):JavaScriptexport const BASE_URL = '[http://192.168.](http://192.168.)X.X:5000'; // Replace with your laptop IP
-Install frontend dependencies and run Expo:Bashnpm install
+Populate the database with initial mock items and user credentials:
+
+Bash
+npm run seed
+Start the backend Node.js server:
+
+Bash
+npm run server
+4. Frontend (Mobile App) Setup
+In a separate terminal window, install mobile dependencies:
+
+Bash
+npm install
+Launch the Expo development server:
+
+Bash
 npx expo start
-Scan the QR code using the Expo Go app on your phone.🔑 Seeded Login CredentialsManager Account:Email: manager@restaurant.comPassword: manager123Customer Account:Email: customer@restaurant.comPassword: customer123📋 API Endpoints Reference TableMethodEndpointAccessRequest BodyResponsePOST/api/auth/registerPublicname, email, password, roleCreated user & tokenPOST/api/auth/loginPublicemail, passwordToken, name, email, roleGET/api/menuPublicNone (Optional: ?category=, ?search=)List of all menu itemsGET/api/menu/:idPublicNoneSingle menu item detailsPOST/api/menuProtected (Manager)name, description, price, category, imageCreated menu item (201)PUT/api/menu/:idProtected (Manager)Updated fieldsUpdated menu itemDELETE/api/menu/:idProtected (Manager)NoneSuccess messagePOST/api/ordersProtected (Customer)orderItems, tableNumberCreated order & server-calculated totalGET/api/orders/myProtected (Customer)NoneCustomer's orders listGET/api/ordersProtected (Manager)NoneAll restaurant ordersPATCH/api/orders/:id/statusProtected (Manager)status (Preparing, Ready, Served, Cancelled)Updated order statusGET/api/tablesProtectedNoneList of tables & capacitiesPOST/api/reservationsProtected (Customer)tableNumber, guests, date, timeCreated reservation requestGET/api/reservations/myProtected (Customer)NoneCustomer's reservation statusesGET/api/reservationsProtected (Manager)NoneAll table reservationsPATCH/api/reservations/:idProtected (Manager)status (Confirmed, Declined)Updated reservation status🛠️ Assignment Questions Breakdown & ImplementationQuestion 1: SRS Update & API DesignUpdated scope to include the Node.js/Express backend and MongoDB.Added 6+ new definitions (API, REST, Endpoint, Mongoose, JWT, HTTP Status Code).Defined complete database schema relationships for Users, MenuItems, Tables, Reservations, and Orders.Documented 15+ REST API endpoints and updated sequence/deployment diagrams in A2/SRS_v2.pdf.Question 2: Express Server SetupBuilt a structured Express server inside the server/ directory.Implemented GET /api/health health-check route returning status and timestamp.Configured custom 404 Route Not Found and 500 Global Error handling middleware.Question 3: MongoDB Connection & SeedingConnected Mongoose to MongoDB (restaurant_app database).Created robust schemas with validations (non-negative pricing, enum order statuses, timestamps).Written seed.js script to populate initial users, 15 menu items, and 6 restaurant tables.Question 4: Menu REST APIsImplemented full CRUD operations for menu items with category filtering and case-insensitive search queries.Handled edge cases with proper HTTP status codes (200, 201, 400, 404, 500) and invalid MongoDB Object ID error handling.Question 5: Authentication & Authorization MiddlewareImplemented secure password hashing via bcryptjs.Generated 1-day JWT tokens on login.Created custom protect and managerOnly middleware to restrict menu management and dashboard actions to authorized managers only.Question 6: React Native App IntegrationCreated centralized src/api/client.js for clean fetch requests with automatic token attachment and error handling.Connected Login, Signup, and Menu screens to live backend endpoints, leveraging AsyncStorage for session persistence.Tested cross-device synchronization between two separate devices/emulators.Question 7: Orders, Reservations & Real-time PollingServer-side total price calculations and strict status-progression validation (Pending ➡️ Preparing ➡️ Ready ➡️ Served).Table reservation availability checking and conflict prevention (returning 409 Conflict if already booked).Integrated 10-second polling (setInterval) inside OrderHistoryScreen and ReservationHistoryScreen for live customer status updates.Deliverables & Submission Checklist (A2 Folder)SRS_v2.pdf: Placed in the A2/ folder.Postman Collection: restaurant-api.postman_collection.json inside A2/.Screenshots: All required screenshots for server health, MongoDB collection, Postman requests/failures, auth testing, and cross-device price sync saved in A2/.Demo Video: Link included below for the 4-minute maximum end-to-end multi-device workflow.📺 
- ## 📺 Demonstration Video Link
-* **Screen Recording:** [Watch End-to-End Multi-Device Workflow Video](https://drive.google.com/file/d/1DSl_rUCJ0lOi5LNkvI9YeXeW1QdQF3ZI/view?usp=sharing)
+Scan the generated QR code using the Expo Go app on your phone to run the app live.
+
+📋 Assignment 2 Deliverables (A2)
+All documentation including the Software Requirements Specification (SRS_v2.pdf), API testing collections (Postman), and system interface screenshots are safely placed inside the A2/ folder in this repository.
