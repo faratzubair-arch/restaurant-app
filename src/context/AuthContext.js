@@ -1,49 +1,92 @@
-// src/context/AuthContext.js
 import React, { createContext, useState, useContext } from 'react';
-import { mockUsers } from '../data/users';
+import Constants from 'expo-constants';
+import { setAuthToken } from '../api/client'; // Sahi folder path
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
+
+// Auto-detect IP address chahe aap ghar hon ya university
+const getBaseUrl = () => {
+  const debuggerHost = Constants.expoConfig?.hostUri || Constants.manifest?.debuggerHost;
+  if (debuggerHost) {
+    const ip = debuggerHost.split(':')[0];
+    return `http://${ip}:5000`;
+  }
+  return 'http://localhost:5000'; // Web ya default ke liye
+};
+
+const API_URL = getBaseUrl();
 
 export const AuthProvider = ({ children }) => {
-  const [usersList, setUsersList] = useState(mockUsers);
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const login = (email, password) => {
-    const foundUser = usersList.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (foundUser) {
-      setUser(foundUser);
-      return { success: true, role: foundUser.role };
+  // Login function jo backend API ko call karegi
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      setUser(data);
+      setToken(data.token);
+      setAuthToken(data.token); // Token ko client file mein set kar diya
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
     }
-    return { success: false, message: 'Invalid email or password' };
   };
 
-  const signup = (name, email, password, role) => {
-    // Check karein ke email pehle se registered toh nahi
-    const existingUser = usersList.find((u) => u.email === email);
-    if (existingUser) {
-      return { success: false, message: 'Email already registered!' };
+  // Signup function jo backend API ko call karegi
+  const signup = async (name, email, password, role) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role: role || 'customer' }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Signup failed');
+      }
+
+      setUser(data);
+      setToken(data.token);
+      setAuthToken(data.token); // Token ko client file mein set kar diya
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
     }
-
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password,
-      role, // 'customer' ya 'manager'
-    };
-
-    setUsersList([...usersList, newUser]);
-    return { success: true, message: 'Account created successfully!' };
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
+    setAuthToken(null); // Logout par token clear kar dein
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,0 +1,50 @@
+### 1. Signup Test (Naya account banane ke liye)
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Farat Zubair",
+  "email": "farat@example.com",
+  "password": "password123",
+  "role": "customer"
+}
+
+### ---
+
+### 2. Login Test (Token hasil karne ke liye)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "farat@example.com",
+  "password": "password123"
+}
+
+### ---
+
+### 3. Get Menu Items (Menu ki list taake MenuItem ID mil sakay)
+GET http://localhost:5000/api/menu
+
+### ---
+
+### 4. Create Order Test
+POST http://localhost:5000/api/orders
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2ExNTVmMWY2YmYzYmJiYzk1MjM4NSIsImlhdCI6MTc5MTcwNzk5MCwiZXhwIjoxNzk0Mjk5OTkwfQ.sz-8Lu9GZBsKXXdL2iKqBQMmZyxtlrx_F3jBT6ZhLmw
+
+{
+  "items": [
+    {
+      "menuItem": "6aca0ce9953276621c4dfc36",
+      "quantity": 2,
+      "price": 500
+    }
+  ],
+  "totalAmount": 1000
+}
+### ---
+
+### 5. Get User Orders (Apne kiye gaye orders dekhne ke liye)
+### 5. Get User Orders (Apne kiye gaye orders dekhne ke liye)
+GET http://localhost:5000/api/orders
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2ExNTVmMWY2YmYzYmJiYzk1MjM4NSIsImlhdCI6MTc5MTcwNzk5MCwiZXhwIjoxNzk0Mjk5OTkwfQ.sz-8Lu9GZBsKXXdL2iKqBQMmZyxtlrx_F3jBT6ZhLmw

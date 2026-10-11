@@ -1,20 +1,28 @@
 // src/screens/OrderSummaryScreen.js
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const SERVICE_CHARGE_RATE = 0.05; // 5%
 const SALES_TAX_RATE = 0.15; // 15%
 
 export default function OrderSummaryScreen() {
-  const { items, discountPercent, promoCode, applyPromo, removePromo, increment, decrement } = useCart();
+  const { items, discountPercent, promoCode, applyPromo, removePromo, increment, decrement, clearCart } = useCart();
+  const { token, API_URL } = useAuth();
   const [promoInput, setPromoInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // useMemo se bill ki calculations optimize ki hain
+  // Safe price calculation for numbers and strings
   const totals = useMemo(() => {
     let subtotal = 0;
     items.forEach(item => {
-      const numericPrice = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+      let numericPrice = 0;
+      if (typeof item.price === 'number') {
+        numericPrice = item.price;
+      } else if (typeof item.price === 'string') {
+        numericPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+      }
       subtotal += numericPrice * item.quantity;
     });
 
@@ -32,23 +40,68 @@ export default function OrderSummaryScreen() {
     };
   }, [items, discountPercent]);
 
+  const handlePlaceOrder = async () => {
+    if (items.length === 0) {
+      Alert.alert('Error', 'Aapka cart khali hai!');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Backend model expects 'orderItems' containing menuItem ID and quantity
+      const orderItems = items.map(item => ({
+        menuItem: item._id || item.id,
+        quantity: item.quantity,
+      }));
+
+      const orderData = {
+        orderItems: orderItems,
+        // Note: Total price is calculated securely on the server side to prevent tampering
+      };
+
+      const response = await fetch(`${API_URL || 'http://localhost:5000'}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', 'Aapka order kamyaabi se place ho gaya hai!');
+        clearCart();
+      } else {
+        Alert.alert('Error', data.message || 'Order place karne mein masla aaya.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Server se connection nahi ho saka.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Summary & Bill</Text>
 
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id || item._id}
         renderItem={({ item }) => (
           <View style={styles.cartItem}>
             <View style={{ flex: 1 }}>
               <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>{item.price} x {item.quantity}</Text>
+              <Text style={styles.itemPrice}>Rs. {item.price} x {item.quantity}</Text>
             </View>
             <View style={styles.stepper}>
-              <TouchableOpacity onPress={() => decrement(item.id)} style={styles.stepBtn}><Text>-</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => decrement(item.id || item._id)} style={styles.stepBtn}><Text>-</Text></TouchableOpacity>
               <Text style={styles.qty}>{item.quantity}</Text>
-              <TouchableOpacity onPress={() => increment(item.id)} style={styles.stepBtn}><Text>+</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => increment(item.id || item._id)} style={styles.stepBtn}><Text>+</Text></TouchableOpacity>
             </View>
           </View>
         )}
@@ -83,6 +136,15 @@ export default function OrderSummaryScreen() {
         )}
         <View style={[styles.billRow, styles.totalRow]}><Text style={styles.totalText}>Grand Total:</Text><Text style={styles.totalText}>Rs. {totals.grandTotal}</Text></View>
       </View>
+
+      {/* Place Order Button */}
+      <TouchableOpacity 
+        style={[styles.checkoutBtn, isSubmitting && { opacity: 0.7 }]} 
+        onPress={handlePlaceOrder}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.checkoutText}>{isSubmitting ? 'Placing Order...' : 'Place Order'}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -107,4 +169,6 @@ const styles = StyleSheet.create({
   billRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   totalRow: { borderTopWidth: 1, borderColor: '#eee', paddingTop: 8, marginTop: 4 },
   totalText: { fontSize: 16, fontWeight: 'bold', color: '#d9534f' },
+  checkoutBtn: { backgroundColor: '#2e7d32', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 15 },
+  checkoutText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });

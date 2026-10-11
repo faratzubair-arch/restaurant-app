@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Switch, TouchableOpacity } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ setActiveScreen }) {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme, colors } = useTheme();
 
@@ -31,6 +31,14 @@ export default function ProfileScreen() {
         <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
 
+      {/* View Order History Button */}
+      <TouchableOpacity 
+        style={[styles.historyButton, { backgroundColor: colors.primary || '#d9534f' }]} 
+        onPress={() => setActiveScreen('orderHistory')}
+      >
+        <Text style={styles.historyText}>View Order History</Text>
+      </TouchableOpacity>
+
       {/* Logout Button */}
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <Text style={styles.logoutText}>Logout</Text>
@@ -46,6 +54,8 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, marginBottom: 2 },
   value: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 15, borderRadius: 10, borderWidth: 1, marginBottom: 20 },
+  historyButton: { padding: 15, borderRadius: 10, alignItems: 'center', marginBottom: 15 },
+  historyText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   logoutButton: { backgroundColor: '#d9534f', padding: 15, borderRadius: 10, alignItems: 'center' },
   logoutText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });

@@ -14,6 +14,8 @@ import OrderSummaryScreen from './src/screens/OrderSummaryScreen';
 import ReservationScreen from './src/screens/ReservationScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import ManagerDashboard from './src/screens/ManagerDashboard';
+import OrderHistoryScreen from './src/screens/OrderHistoryScreen';
+import ReservationHistoryScreen from './src/screens/ReservationHistoryScreen'; // 1. ReservationHistoryScreen import kiya
 
 function MainNavigator() {
   const { user } = useAuth();
@@ -38,8 +40,10 @@ function MainNavigator() {
       <View style={styles.screenContainer}>
         {activeScreen === 'menu' && <MenuScreen />}
         {activeScreen === 'cart' && <OrderSummaryScreen />}
-        {activeScreen === 'reservation' && <ReservationScreen />}
-        {activeScreen === 'profile' && <ProfileScreen />}
+        {activeScreen === 'reservation' && <ReservationScreen setActiveScreen={setActiveScreen} />} 
+        {activeScreen === 'reservationHistory' && <ReservationHistoryScreen />} {/* Live Table Status Screen */}
+        {activeScreen === 'profile' && <ProfileScreen setActiveScreen={setActiveScreen} />}  
+        {activeScreen === 'orderHistory' && <OrderHistoryScreen />}  
       </View>
 
       {/* Bottom Navigation Bar for Customer */}
@@ -54,6 +58,11 @@ function MainNavigator() {
 
         <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('reservation')}>
           <Text style={styles.navText}>📅 Table</Text>
+        </TouchableOpacity>
+
+        {/* Live Reservation & Order History ke liye button */}
+        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('reservationHistory')}>
+          <Text style={styles.navText}>📊 Status</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('profile')}>
@@ -93,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   navText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
     color: '#d9534f',
   },

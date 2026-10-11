@@ -9,7 +9,7 @@ import {
   ActivityIndicator, 
   Alert 
 } from 'react-native';
-import { useAuth } from '../context/AuthContext'; // Yahan import lazmi hai!
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen() {
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -20,9 +20,9 @@ export default function LoginScreen() {
   const [role, setRole] = useState('customer');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login, signup } = useAuth(); // Yahan useAuth use ho raha hai
+  const { login, signup } = useAuth();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all required fields.');
       return;
@@ -35,24 +35,26 @@ export default function LoginScreen() {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-
+    try {
       if (isLoginMode) {
-        const result = login(email, password);
-        if (!result.success) {
-          Alert.alert('Login Failed', result.message);
+        const result = await login(email, password);
+        if (result && !result.success) {
+          Alert.alert('Login Failed', result.message || 'Invalid credentials');
         }
       } else {
-        const result = signup(fullName, email, password, role);
-        if (result.success) {
+        const result = await signup(fullName, email, password, role);
+        if (result && result.success) {
           Alert.alert('Success', result.message);
           setIsLoginMode(true);
         } else {
-          Alert.alert('Error', result.message);
+          Alert.alert('Error', result?.message || 'Signup failed');
         }
       }
-    }, 1000);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

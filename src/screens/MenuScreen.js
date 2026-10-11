@@ -10,37 +10,52 @@ import {
   RefreshControl,
   TextInput,
 } from 'react-native';
-import { mockMenu } from '../data/menu';
-import MenuItemCard from '../components/MenuItemCard'; // MenuItemCard import kiya
+import MenuItemCard from '../components/MenuItemCard';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function MenuScreen() {
   const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('default'); // 'lowHigh', 'highLow', 'az'
+  const [sortBy, setSortBy] = useState('default');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [favorites, setFavorites] = useState([]); // Favourite items ke liye state
+  const [favorites, setFavorites] = useState([]);
 
   const { addItem } = useCart();
+  const { API_URL } = useAuth();
   const searchInputRef = useRef(null);
 
-  const fetchMenu = () => {
-    setIsLoading(true);
-    setError(null);
-    setTimeout(() => {
-      setMenuItems(mockMenu);
+  const fetchMenu = async () => {
+    try {
+      setError(null);
+      const response = await fetch(`${API_URL || 'http://localhost:5000'}/api/menu`);
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedData = data.map(item => ({
+          ...item,
+          id: item._id,
+        }));
+        setMenuItems(formattedData);
+      } else {
+        setError('Menu load karne mein masla aaya.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Server se connection nahi ho saka.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => {
     fetchMenu();
   }, []);
 
-  // useCallback se handlers ko stable rakha taake un-necessary re-renders na hon
   const handleAddToCart = useCallback((item) => {
     addItem(item);
     alert(`Added ${item.name} to cart!`);
@@ -52,16 +67,32 @@ export default function MenuScreen() {
     );
   }, []);
 
-  // useMemo se filtering aur sorting ko optimize kiya (derived state ko state mein nahi rakha)
   const filteredAndSortedItems = useMemo(() => {
     let result = [...menuItems];
 
-    // Category filter
     if (selectedCategory !== 'All') {
-      result = result.filter(item => item.category === selectedCategory);
+      result = result.filter(item => {
+        if (!item.category) return false;
+        const itemCat = item.category.toLowerCase();
+        const targetCat = selectedCategory.toLowerCase();
+
+        if (targetCat === 'starters' || targetCat === 'starter') {
+          return itemCat.includes('starter');
+        }
+        if (targetCat === 'mains' || targetCat === 'main course') {
+          return itemCat.includes('main');
+        }
+        if (targetCat === 'drinks' || targetCat === 'beverages') {
+          return itemCat.includes('drink') || itemCat.includes('beverage');
+        }
+        if (targetCat === 'desserts' || targetCat === 'dessert') {
+          return itemCat.includes('dessert');
+        }
+
+        return itemCat === targetCat;
+      });
     }
 
-    // Search filter
     if (searchText.trim() !== '') {
       const query = searchText.toLowerCase();
       result = result.filter(item => 
@@ -70,11 +101,10 @@ export default function MenuScreen() {
       );
     }
 
-    // Sorting logic
     if (sortBy === 'lowHigh') {
-      result.sort((a, b) => parseFloat(a.price.replace(/[^0-9.]/g, '')) - parseFloat(b.price.replace(/[^0-9.]/g, '')));
+      result.sort((a, b) => Number(a.price) - Number(b.price));
     } else if (sortBy === 'highLow') {
-      result.sort((a, b) => parseFloat(b.price.replace(/[^0-9.]/g, '')) - parseFloat(a.price.replace(/[^0-9.]/g, '')));
+      result.sort((a, b) => Number(b.price) - Number(a.price));
     } else if (sortBy === 'az') {
       result.sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -97,7 +127,6 @@ export default function MenuScreen() {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Pakistani Restaurant Menu</Text>
 
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
           ref={searchInputRef}
@@ -108,7 +137,6 @@ export default function MenuScreen() {
         />
       </View>
 
-      {/* Category Chips */}
       <View style={styles.categoryContainer}>
         {categories.map((cat) => (
           <TouchableOpacity
@@ -123,7 +151,6 @@ export default function MenuScreen() {
         ))}
       </View>
 
-      {/* Sort Buttons */}
       <View style={styles.sortContainer}>
         <Text style={styles.sortLabel}>Sort By:</Text>
         <TouchableOpacity style={[styles.sortBtn, sortBy === 'lowHigh' && styles.activeSort]} onPress={() => setSortBy('lowHigh')}>
@@ -137,11 +164,10 @@ export default function MenuScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Menu List using MenuItemCard */}
       <FlatList
         data={filteredAndSortedItems}
-        keyExtractor={(item) => item.id}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchMenu} />}
+        keyExtractor={(item) => item.id || item._id}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchMenu(); }} />}
         renderItem={({ item }) => (
           <MenuItemCard
             item={item}
