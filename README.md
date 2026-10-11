@@ -1,138 +1,51 @@
-# Restaurant App MVP (Full-Stack Mobile Application)
+# Restaurant App with Server and Database (A2)
 
-A comprehensive full-stack restaurant mobile application built with **React Native, Expo, Node.js, Express.js, and MongoDB**, featuring role-based authentication, menu browsing, cart state management, and table reservations.
-
----
-
-## 👤 Student Information
-
-* **Name:** Farat Zubair
-* **Course:** Artificial Intelligence (AI)
-* **Repository:** [restaurant-app-mvp](https://github.com/faratzubair-arch/restaurant-app-mvp)
+Welcome to the GitHub repository for **Assignment 2: Full-Stack Restaurant App (React Native, Node.js, Express, MongoDB)**. This project upgrades the A1 mock-data mobile application into a fully functional, production-ready distributed system featuring a backend REST API server and a persistent MongoDB database.
 
 ---
 
-## 🎥 Project Demonstration Video & Screen Recording Note
-* **Screen Recording Link:** 👉 **[Watch & Download Project Walkthrough Video (Google Drive)](https://drive.google.com/file/d/1DSl_rUCJ0lOi5LNkvI9YeXeW1QdQF3ZI/view?usp=sharing)**
-* **GitHub Size Limit Handling:** During the project upload, a heavy screen recording file (`Recording 2026-10-11 210411.mp4` exceeding 160 MB) caused a push failure due to GitHub's strict **100 MB per-file size limit**[cite: 8]. To resolve this, the video file was removed from Git tracking and history, added to `.gitignore`, and securely hosted on **Google Drive** for evaluation while keeping the repository clean and optimized.
-
----
-
-## 🔑 Seeded Credentials
-
-You can use the following default credentials to test customer and manager roles in the application:
-
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Customer** | `customer@test.com` | `Password1` |
-| **Manager** | `manager@test.com` | `Password1` |
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-| Method | Endpoint | Access | Request Body | Response |
-| :--- | :--- | :--- | :--- | :--- |
-| **POST** | `/api/auth/register` | Public | `name, email, password` | User object & JWT token |
-| **POST** | `/api/auth/login` | Public | `email, password` | User info & JWT token |
-
-### Menu & Orders
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/menu` | Public | Fetch all available menu items |
-| **POST** | `/api/orders` | Private (Customer) | Place a new food order |
-| **GET** | `/api/orders` | Private (Manager) | View all restaurant orders |
-
-### Tables & Reservations
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/tables` | Private | Check available restaurant tables |
-| **POST** | `/api/reservations` | Private (Customer) | Reserve a table |
-
----
-
-## ❓ Project Question-by-Question (Q/Q) & Feature Breakdown
-
-* **Q1: What is the primary objective of the Restaurant App?**
-  * **Answer:** The application provides a complete full-stack mobile platform where users can browse menus, add items to a cart, reserve tables, and managers can efficiently handle restaurant operations.
-
-* **Q2: Which technologies (Tech Stack) are used in this project?**
-  * **Frontend:** React Native and Expo framework for cross-platform mobile user interfaces.
-  * **Backend:** Node.js and Express.js for RESTful APIs and server-side business logic.
-  * **Database:** MongoDB and Mongoose ODM for handling structured database schemas (User, MenuItem, Order, Table, Reservation).
-
-* **Q3: How are authentication and authorization implemented?**
-  * **Answer:** The system uses JSON Web Tokens (JWT) for secure role-based authentication, separating access levels and middleware restrictions between customers and managers.
-
-* **Q4: Why was there an issue pushing the video recording to GitHub, and how was it resolved?**
-  * **Answer:** GitHub enforces a strict **100 MB** file size limit, and the local recording file was approximately **161.81 MB**[cite: 8]. This was resolved by removing the file from Git tracking/history, updating the `.gitignore` configuration, and uploading the full walkthrough video to Google Drive.
+## 🚀 Demo Video
+Watch the full application demonstration across multiple devices:
+* **[Watch A2 Demo Video (Google Drive)](https://drive.google.com/file/d/1DSl_rUCJ0lOi5LNkvI9YeXeW1QdQF3ZI/view?usp=sharing)**
 
 ---
 
 ## 📂 Repository Structure
-
-```txt
+```text
 restaurant-app-mvp/
-├── server/
-│   ├── config/       # Database connection (db.js)
-│   ├── controllers/  # Business logic for auth, menu, orders, reservations, tables
-│   ├── middleware/   # JWT authentication and role-based authorization (authMiddleware.js)
-│   ├── models/       # Mongoose schemas (User, MenuItem, Table, Reservation, Order)
-│   ├── routes/       # Express route definitions
-│   ├── server.js     # Entry point for the backend server
-│   └── seed.js       # Database seeding script
-├── src/
-│   ├── api/          # API client helper (client.js)
-│   ├── context/      # React context providers (Auth, Cart, Theme)
-│   ├── hooks/        # Custom React hooks (useApi.js)
-│   └── screens/      # Customer and manager mobile screens
-├── A2/               # Assignment 2 deliverables (SRS_v2.pdf, Postman collection, Screenshots)
-├── .env.example      # Template for environment variables
-└── README.md         # Project Documentation
-🚀 Getting Setup & Configuration Instructions
-1. Prerequisites
-Node.js (LTS) and npm installed on your system.
-
-MongoDB (local instance or MongoDB Atlas cloud cluster).
-
-Expo Go app installed on your physical mobile device (or an Android/iOS emulator).
-
-2. Clone the Repository
-Open your terminal and run the following commands to clone and open the project:
-
-Bash
-git clone [https://github.com/faratzubair-arch/restaurant-app-mvp.git](https://github.com/faratzubair-arch/restaurant-app-mvp.git)
-cd restaurant-app-mvp
-3. Backend Setup
-Install server dependencies:
-
-Bash
-npm install
-Create a .env file in the root directory matching .env.example with your credentials:
-
-Code snippet
-PORT=5000
+├── A2/
+│   ├── SRS_v2.pdf                   # Updated Software Requirements Specification
+│   ├── diagrams/                    # Sequence and Deployment diagrams
+│   └── restaurant-api.postman_collection.json # Exported Postman Collection
+├── server/                          # Backend Node.js & Express application
+│   ├── config/                      # Database configuration (db.js)
+│   ├── controllers/                 # Route controllers (auth, menu, orders, reservations)
+│   ├── middleware/                  # Authentication & role-verification middleware (auth.js)
+│   ├── models/                      # Mongoose schemas (User, MenuItem, Table, Reservation, Order)
+│   ├── routes/                      # API endpoint routers
+│   ├── server.js                    # Entry point for Express server
+│   ├── seed.js                      # Database seeding script
+│   ├── .env.example                 # Environment variables template
+│   └── package.json                 # Backend dependencies & scripts
+├── src/                             # React Native mobile application source code
+│   ├── api/                         # API client helper (client.js) & custom hooks (useApi.js)
+│   ├── context/                     # React Context (AuthContext, etc.)
+│   ├── screens/                     # Updated screens fetching from server
+│   └── ...                          # Components, reducers, and navigation
+├── package.json
+└── README.md
+🛠️ Tech Stack & ConceptsFrontend: React Native (Expo Go), Context API, Custom Hooks, React Navigation, AsyncStorage.Backend: Node.js, Express.js, CORS, dotenv, JWT (JSON Web Tokens), Bcryptjs.Database: MongoDB (MongoDB Atlas / Community Server with Mongoose ODM).Testing & Tools: Postman / Thunder Client.⚙️ Getting Started & InstallationPrerequisitesNode.js (LTS) and npm installed on your machine.MongoDB cluster (MongoDB Atlas) or local Community Server.Expo Go app installed on your mobile device or an emulator.1. Clone the Repository & Setup BackendBashgit clone [https://github.com/your-username/restaurant-app-mvp.git](https://github.com/your-username/restaurant-app-mvp.git)
+cd restaurant-app-mvp/server
+2. Configure Environment VariablesCreate a .env file inside the server/ folder based on .env.example:Code snippetPORT=5000
 MONGO_URI=your_mongodb_connection_string_here
-JWT_SECRET=your_jwt_secret_key_here
-Populate the database with initial mock items and user credentials:
-
-Bash
-npm run seed
-Start the backend Node.js server:
-
-Bash
-npm run server
-4. Frontend (Mobile App) Setup
-In a separate terminal window, install mobile dependencies:
-
-Bash
+JWT_SECRET=your_super_secret_jwt_key
+(Note: Do not commit your real .env file.)3. Install Dependencies and Seed DatabaseBash# Install backend dependencies
 npm install
-Launch the Expo development server:
 
-Bash
-npx expo start
-Scan the generated QR code using the Expo Go app on your phone to run the app live.
-
-📋 Assignment 2 Deliverables (A2)
-All documentation including the Software Requirements Specification (SRS_v2.pdf), API testing collections (Postman), and system interface screenshots are safely placed inside the A2/ folder in this repository.
+# Seed mock data into MongoDB (adds users, menu items, and tables)
+npm run seed
+4. Run the Development ServerBashnpm run dev
+The server will start on port 5000.📱 Running the React Native Mobile AppNavigate back to the root directory and install app dependencies:Bashcd ..
+npm install
+Configure your API base URL in src/api/client.js:Update BASE_URL to point to your laptop's local IP address (e.g., http://192.168.1.15:5000). Ensure your phone and laptop are on the same Wi-Fi network.If using an Android Emulator, use http://10.0.2.2:5000.Start Expo:Bashnpx expo start
+Scan the QR code using Expo Go on your physical mobile device or launch an emulator.🔑 Seeded Login CredentialsYou can use the following seeded accounts to test customer and manager workflows:Manager Account:Email: manager@restaurant.comPassword: password123Role: Manager (Full access to menu CRUD, order status updates, and reservation management).Customer Account:Email: customer@restaurant.comPassword: password123Role: Customer (Access to view menu, place orders, book tables, and track order statuses via polling).📋 API Endpoints ReferenceMethodEndpointAccessDescriptionPOST/api/auth/registerPublicRegister a new user accountPOST/api/auth/loginPublicAuthenticate user and return JWT tokenGET/api/menuPublicRetrieve all menu items (supports query filters for category and search)GET/api/menu/:idPublicGet a single menu item by IDPOST/api/menuProtected (Manager)Add a new menu itemPUT/api/menu/:idProtected (Manager)Update an existing menu itemDELETE/api/menu/:idProtected (Manager)Remove a menu itemPOST/api/ordersProtected (Customer)Place a new order with server-side price validationGET/api/orders/myProtected (Customer)Retrieve authenticated customer's ordersGET/api/ordersProtected (Manager)Retrieve all customer ordersPATCH/api/orders/:id/statusProtected (Manager)Update order fulfillment status (Pending ➔ Preparing ➔ Ready ➔ Served)POST/api/reservationsProtected (Customer)Book a table with server-side capacity/availability checkGET/api/reservations/myProtected (Customer)Retrieve authenticated customer's reservationsGET/api/reservationsProtected (Manager)Retrieve all table reservationsPATCH/api/reservations/:idProtected (Manager)Accept or decline a table reservation
