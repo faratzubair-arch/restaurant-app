@@ -184,5 +184,4 @@ Protected routes require an `Authorization: Bearer <token>` header with the JWT 
 ---
 
 ## 👤 Author
-
-**Your Name** — [GitHub](https://github.com/your-username)
+* **Farat Zubair** — [GitHub Profile](https://github.com/faratzubair-arch)
