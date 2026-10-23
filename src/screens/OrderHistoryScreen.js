@@ -15,7 +15,7 @@ export default function OrderHistoryScreen() {
     try {
       setError(null);
       // Customer ke apne orders fetch karne ke liye /api/orders/my use karein
-      const response = await fetch(`${API_URL || 'https://social-frogs-brake.loca.lt'}/api/orders/my`, {
+      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/orders/my`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

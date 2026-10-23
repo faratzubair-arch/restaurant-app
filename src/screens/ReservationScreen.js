@@ -23,7 +23,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
   const fetchTables = async () => {
     try {
-      const response = await fetch(`${API_URL || 'https://social-frogs-brake.loca.lt'}/api/tables`, {
+      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/tables`, {
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
@@ -46,7 +46,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL || 'https://social-frogs-brake.loca.lt'}/api/reservations`, {
+      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
