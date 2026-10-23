@@ -60,7 +60,7 @@ export default function OrderSummaryScreen() {
         // Note: Total price is calculated securely on the server side to prevent tampering
       };
 
-      const response = await fetch(`${API_URL || 'https://red-jars-sing.loca.lt'}/api/orders`, {
+      const response = await fetch(`${API_URL || 'https://social-frogs-brake.loca.lt'}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

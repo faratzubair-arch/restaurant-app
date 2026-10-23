@@ -11,7 +11,7 @@ const getBaseUrl = () => {
     const ip = debuggerHost.split(':')[0];
     return `http://${ip}:5000`;
   }
-  return 'https://red-jars-sing.loca.lt'; // Web ya default ke liye
+  return 'https://social-frogs-brake.loca.lt'; // Web ya default ke liye
 };
 
 const API_URL = getBaseUrl();

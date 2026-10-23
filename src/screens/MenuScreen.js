@@ -31,7 +31,7 @@ export default function MenuScreen() {
   const fetchMenu = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'https://red-jars-sing.loca.lt'}/api/menu`);
+      const response = await fetch(`${API_URL || 'https://social-frogs-brake.loca.lt'}/api/menu`);
       const data = await response.json();
 
       if (response.ok) {
