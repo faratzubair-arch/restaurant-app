@@ -14,7 +14,7 @@ export default function ReservationHistoryScreen() {
   const fetchReservations = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'http://localhost:5000'}/api/reservations/my`, {
+      const response = await fetch(`${API_URL || 'https://red-jars-sing.loca.lt'}/api/reservations/my`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

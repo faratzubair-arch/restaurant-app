@@ -1,4 +1,4 @@
-### 1. Signup Test (Naya account banane ke liye)
+### 1. Signup Test 
 POST http://localhost:5000/api/auth/signup
 Content-Type: application/json
 
@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ### ---
 
-### 2. Login Test (Token hasil karne ke liye)
+### 2. Login Test 
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ### ---
 
-### 3. Get Menu Items (Menu ki list taake MenuItem ID mil sakay)
+### 3. Get Menu Items 
 GET http://localhost:5000/api/menu
 
 ### ---
@@ -48,3 +48,35 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2ExNTVmM
 ### 5. Get User Orders (Apne kiye gaye orders dekhne ke liye)
 GET http://localhost:5000/api/orders
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2ExNTVmMWY2YmYzYmJiYzk1MjM4NSIsImlhdCI6MTc5MTcwNzk5MCwiZXhwIjoxNzk0Mjk5OTkwfQ.sz-8Lu9GZBsKXXdL2iKqBQMmZyxtlrx_F3jBT6ZhLmw
+
+### 1. Manager Login (Token lene ke liye)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ali@test.com",
+  "password": "password123"
+}
+
+### 2. Add New Dish (POST Request with Token)
+POST http://localhost:5000/api/menu
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2I4Nzg2MjE2ZGVlNmRlNDMxZDhkMiIsImlhdCI6MTc5MTcyNzA0OSwiZXhwIjoxNzk0MzE5MDQ5fQ.1wvvrvI0sg_Nuuh1zyYZgSRPRR6r70e5IwYauVyVIV8
+
+{
+  "name": "Chicken Biryani",
+  "price": 550,
+  "category": "Mains",
+  "description": "Spicy traditional rice dish",
+  "isAvailable": true
+}
+
+GET http://localhost:5000/api/menu
+
+### Delete Specific Menu Item
+DELETE http://localhost:5000/api/menu/6aca0ce9953276621c4dfc37
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2I4Nzg2MjE2ZGVlNmRlNDMxZDhkMiIsImlhdCI6MTc5MTcyNzA0OSwiZXhwIjoxNzk0MzE5MDQ5fQ.1wvvrvI0sg_Nuuh1zyYZgSRPRR6r70e5IwYauVyVIV8
+
+### Delete Seekh Kabab
+DELETE http://localhost:5000/api/menu/6aca0ce9953276621c4dfc38
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2I4Nzg2MjE2ZGVlNmRlNDMxZDhkMiIsImlhdCI6MTc5MTcyNzA0OSwiZXhwIjoxNzk0MzE5MDQ5fQ.1wvvrvI0sg_Nuuh1zyYZgSRPRR6r70e5IwYauVyVIV8

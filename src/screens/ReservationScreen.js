@@ -23,7 +23,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
   const fetchTables = async () => {
     try {
-      const response = await fetch(`${API_URL || 'http://localhost:5000'}/api/tables`, {
+      const response = await fetch(`${API_URL || 'https://red-jars-sing.loca.lt'}/api/tables`, {
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
@@ -46,7 +46,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL || 'http://localhost:5000'}/api/reservations`, {
+      const response = await fetch(`${API_URL || 'https://red-jars-sing.loca.lt'}/api/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
