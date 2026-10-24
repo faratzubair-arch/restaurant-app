@@ -1,6 +1,6 @@
 // src/screens/ReservationScreen.js
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 const timeSlots = ['12:00', '13:00', '14:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
@@ -40,7 +40,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
   const handleBooking = async () => {
     if (!name || !phone || !selectedTable || !selectedDate || !selectedTime) {
-      alert('Please fill in all fields (Name, Phone, Table, Date, Time).');
+      Alert.alert('Incomplete Form', 'Please fill in all fields (Name, Phone, Table, Date, Time).');
       return;
     }
 
@@ -63,23 +63,26 @@ export default function ReservationScreen({ setActiveScreen }) {
       const data = await response.json();
 
       if (response.ok) {
-        alert(`Table successfully booked for ${name}! Live status check karne ke liye Status tab par jayein.`);
+        Alert.alert(
+          'Reservation Successful',
+          `Table successfully booked for ${name}! Please check the Status tab to view live updates.`
+        );
         setName('');
         setPhone('');
         setSelectedTable(null);
         setSelectedDate('');
         setSelectedTime('');
         
-        // Booking ke baad foran status screen par bhej dein
+        // Navigate to status screen upon successful booking
         if (setActiveScreen) {
           setActiveScreen('reservationHistory');
         }
       } else {
-        alert(data.message || 'Booking failed.');
+        Alert.alert('Booking Failed', data.message || 'Unable to complete your reservation.');
       }
     } catch (err) {
       console.error(err);
-      alert('Server connection error.');
+      Alert.alert('Connection Error', 'Failed to connect to the server. Please check your internet connection.');
     } finally {
       setLoading(false);
     }
@@ -87,7 +90,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Book a Desi Table</Text>
+      <Text style={styles.title}>Book a Table</Text>
 
       {/* Live Status Check Button */}
       {setActiveScreen && (
@@ -95,7 +98,7 @@ export default function ReservationScreen({ setActiveScreen }) {
           style={styles.historyBtn} 
           onPress={() => setActiveScreen('reservationHistory')}
         >
-          <Text style={styles.historyBtnText}>📊 View My Reservation Status (Live)</Text>
+          <Text style={styles.historyBtnText}>📊 View Live Reservation Status</Text>
         </TouchableOpacity>
       )}
 
@@ -109,7 +112,7 @@ export default function ReservationScreen({ setActiveScreen }) {
 
         <TextInput 
           style={styles.input} 
-          placeholder="Phone Number (03XX-XXXXXXX)" 
+          placeholder="Phone Number (e.g. 03001234567)" 
           value={phone} 
           onChangeText={setPhone} 
           keyboardType="phone-pad"
@@ -137,11 +140,11 @@ export default function ReservationScreen({ setActiveScreen }) {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noTableText}>Loading tables...</Text>
+            <Text style={styles.noTableText}>Loading available tables...</Text>
           )}
         </View>
 
-        <Text style={styles.label}>Guests: {guests} persons</Text>
+        <Text style={styles.label}>Guests: {guests} {guests > 1 ? 'persons' : 'person'}</Text>
         <View style={styles.row}>
           {[2, 4, 6, 8].map(num => (
             <TouchableOpacity key={num} style={[styles.chip, guests === num && styles.activeChip]} onPress={() => setGuests(num)}>
