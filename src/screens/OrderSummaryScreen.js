@@ -60,7 +60,7 @@ export default function OrderSummaryScreen() {
         // Note: Total price is calculated securely on the server side to prevent tampering
       };
 
-      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/orders`, {
+      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 let authToken = null;
 
 // Localtunnel URL ke sath /api add kiya hai
-const BASE_URL = 'https://exceptions-hdtv-twist-frederick.trycloudflare.com/api';
+const BASE_URL = 'https://nursing-grandson-dimmer.ngrok-free.dev/api';
 
 // Token set aur AsyncStorage mein save karne ke liye function
 export const setAuthToken = async (token) => {

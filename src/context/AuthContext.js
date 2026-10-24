@@ -11,7 +11,7 @@ const getBaseUrl = () => {
     const ip = debuggerHost.split(':')[0];
     return `http://${ip}:5000`;
   }
-  return 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'; // Web ya default ke liye
+  return 'https://nursing-grandson-dimmer.ngrok-free.dev'; // Web ya default ke liye
 };
 
 const API_URL = getBaseUrl();

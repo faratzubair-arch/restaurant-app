@@ -31,7 +31,7 @@ export default function MenuScreen() {
   const fetchMenu = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/menu`);
+      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/menu`);
       const data = await response.json();
 
       if (response.ok) {

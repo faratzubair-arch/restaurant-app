@@ -14,7 +14,7 @@ export default function ReservationHistoryScreen() {
   const fetchReservations = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'https://exceptions-hdtv-twist-frederick.trycloudflare.com'}/api/reservations/my`, {
+      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/reservations/my`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

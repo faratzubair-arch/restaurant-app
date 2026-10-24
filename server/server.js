@@ -13,6 +13,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Ngrok warning bypass middleware (Ensures Mobile APK gets direct JSON responses)
+app.use((req, res, next) => {
+  res.setHeader('ngrok-skip-browser-warning', 'true');
+  next();
+});
+
 // Database Connection & Server Startup
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
