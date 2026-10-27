@@ -11,13 +11,15 @@ export default function ReservationHistoryScreen() {
 
   const { token, API_URL } = useAuth();
 
+  // Fetch current user's reservations from backend
   const fetchReservations = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/reservations/my`, {
+      const response = await fetch(`${API_URL}/api/reservations/my`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -26,11 +28,11 @@ export default function ReservationHistoryScreen() {
       if (response.ok) {
         setReservations(data);
       } else {
-        setError(data.message || 'Reservations load karne mein masla aaya.');
+        setError(data.message || 'Failed to load reservations.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Server se connection nahi ho saka.');
+      console.error('Fetch reservations error:', err);
+      setError('Unable to connect to the server. Please check your network.');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -40,19 +42,20 @@ export default function ReservationHistoryScreen() {
   useEffect(() => {
     fetchReservations();
 
-    // Polling every 10 seconds for live table reservation status update (Confirmed/Declined)
+    // Poll every 10 seconds to update live reservation status (Confirmed / Declined)
     const interval = setInterval(() => {
       fetchReservations();
     }, 10000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#d9534f" />
-        <Text style={styles.loadingText}>Loading Your Reservations...</Text>
+        <Text style={styles.loadingText}>Loading your reservations...</Text>
       </View>
     );
   }
@@ -67,22 +70,35 @@ export default function ReservationHistoryScreen() {
         </View>
       ) : reservations.length === 0 ? (
         <View style={styles.centerContainer}>
-          <Text style={styles.emptyText}>Aapne abhi tak koi table book nahi ki.</Text>
+          <Text style={styles.emptyText}>You have not reserved any tables yet.</Text>
         </View>
       ) : (
         <FlatList
           data={reservations}
           keyExtractor={(item) => item._id}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchReservations(); }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                fetchReservations();
+              }}
+            />
+          }
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View style={styles.header}>
                 <Text style={styles.tableText}>Table #{item.tableNumber}</Text>
-                <Text style={[
-                  styles.status, 
-                  item.status === 'Confirmed' ? styles.success : 
-                  item.status === 'Declined' ? styles.danger : styles.pending
-                ]}>
+                <Text
+                  style={[
+                    styles.status,
+                    item.status === 'Confirmed'
+                      ? styles.success
+                      : item.status === 'Declined'
+                      ? styles.danger
+                      : styles.pending,
+                  ]}
+                >
                   {item.status || 'Pending'}
                 </Text>
               </View>

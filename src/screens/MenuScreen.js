@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   TextInput,
+  Alert,
 } from 'react-native';
 import MenuItemCard from '../components/MenuItemCard';
 import { useCart } from '../context/CartContext';
@@ -28,24 +29,25 @@ export default function MenuScreen() {
   const { API_URL } = useAuth();
   const searchInputRef = useRef(null);
 
+  // Fetch all menu items from the backend
   const fetchMenu = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/menu`);
+      const response = await fetch(`${API_URL}/api/menu`);
       const data = await response.json();
 
       if (response.ok) {
-        const formattedData = data.map(item => ({
+        const formattedData = data.map((item) => ({
           ...item,
           id: item._id,
         }));
         setMenuItems(formattedData);
       } else {
-        setError('Menu load karne mein masla aaya.');
+        setError('Failed to load menu items.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Server se connection nahi ho saka.');
+      console.error('Fetch menu error:', err);
+      setError('Unable to connect to the server. Please check your network.');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -56,22 +58,26 @@ export default function MenuScreen() {
     fetchMenu();
   }, []);
 
-  const handleAddToCart = useCallback((item) => {
-    addItem(item);
-    alert(`Added ${item.name} to cart!`);
-  }, [addItem]);
+  const handleAddToCart = useCallback(
+    (item) => {
+      addItem(item);
+      Alert.alert('Item Added', `${item.name} has been added to your cart.`);
+    },
+    [addItem]
+  );
 
   const handleToggleFavorite = useCallback((id) => {
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id]
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
     );
   }, []);
 
+  // Filter by category and search text, then apply selected sort order
   const filteredAndSortedItems = useMemo(() => {
     let result = [...menuItems];
 
     if (selectedCategory !== 'All') {
-      result = result.filter(item => {
+      result = result.filter((item) => {
         if (!item.category) return false;
         const itemCat = item.category.toLowerCase();
         const targetCat = selectedCategory.toLowerCase();
@@ -95,9 +101,10 @@ export default function MenuScreen() {
 
     if (searchText.trim() !== '') {
       const query = searchText.toLowerCase();
-      result = result.filter(item => 
-        item.name.toLowerCase().includes(query) || 
-        item.description.toLowerCase().includes(query)
+      result = result.filter(
+        (item) =>
+          item.name.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query)
       );
     }
 
@@ -116,7 +123,7 @@ export default function MenuScreen() {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#d9534f" />
-        <Text style={styles.loadingText}>Loading Desi Menu...</Text>
+        <Text style={styles.loadingText}>Loading restaurant menu...</Text>
       </View>
     );
   }
@@ -125,7 +132,7 @@ export default function MenuScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Pakistani Restaurant Menu</Text>
+      <Text style={styles.headerTitle}>Restaurant Menu</Text>
 
       <View style={styles.searchContainer}>
         <TextInput
@@ -144,7 +151,12 @@ export default function MenuScreen() {
             style={[styles.chip, selectedCategory === cat && styles.activeChip]}
             onPress={() => setSelectedCategory(cat)}
           >
-            <Text style={[styles.chipText, selectedCategory === cat && styles.activeChipText]}>
+            <Text
+              style={[
+                styles.chipText,
+                selectedCategory === cat && styles.activeChipText,
+              ]}
+            >
               {cat}
             </Text>
           </TouchableOpacity>
@@ -153,37 +165,86 @@ export default function MenuScreen() {
 
       <View style={styles.sortContainer}>
         <Text style={styles.sortLabel}>Sort By:</Text>
-        <TouchableOpacity style={[styles.sortBtn, sortBy === 'lowHigh' && styles.activeSort]} onPress={() => setSortBy('lowHigh')}>
-          <Text style={styles.sortText}>Price: Low-High</Text>
+        <TouchableOpacity
+          style={[styles.sortBtn, sortBy === 'lowHigh' && styles.activeSort]}
+          onPress={() => setSortBy('lowHigh')}
+        >
+          <Text
+            style={[
+              styles.sortText,
+              sortBy === 'lowHigh' && styles.activeSortText,
+            ]}
+          >
+            Price: Low-High
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.sortBtn, sortBy === 'highLow' && styles.activeSort]} onPress={() => setSortBy('highLow')}>
-          <Text style={styles.sortText}>Price: High-Low</Text>
+        <TouchableOpacity
+          style={[styles.sortBtn, sortBy === 'highLow' && styles.activeSort]}
+          onPress={() => setSortBy('highLow')}
+        >
+          <Text
+            style={[
+              styles.sortText,
+              sortBy === 'highLow' && styles.activeSortText,
+            ]}
+          >
+            Price: High-Low
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.sortBtn, sortBy === 'az' && styles.activeSort]} onPress={() => setSortBy('az')}>
-          <Text style={styles.sortText}>Name: A-Z</Text>
+        <TouchableOpacity
+          style={[styles.sortBtn, sortBy === 'az' && styles.activeSort]}
+          onPress={() => setSortBy('az')}
+        >
+          <Text
+            style={[
+              styles.sortText,
+              sortBy === 'az' && styles.activeSortText,
+            ]}
+          >
+            Name: A-Z
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={filteredAndSortedItems}
-        keyExtractor={(item) => item.id || item._id}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchMenu(); }} />}
-        renderItem={({ item }) => (
-          <MenuItemCard
-            item={item}
-            onAddToCart={handleAddToCart}
-            onToggleFavorite={handleToggleFavorite}
-            isFavorite={favorites.includes(item.id)}
-          />
-        )}
-      />
+      {error ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredAndSortedItems}
+          keyExtractor={(item) => item.id || item._id}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                fetchMenu();
+              }}
+            />
+          }
+          renderItem={({ item }) => (
+            <MenuItemCard
+              item={item}
+              onAddToCart={handleAddToCart}
+              onToggleFavorite={handleToggleFavorite}
+              isFavorite={favorites.includes(item.id)}
+            />
+          )}
+          ListEmptyComponent={
+            <View style={styles.centerContainer}>
+              <Text style={styles.emptyText}>No menu items found.</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fdfbf7', padding: 15, paddingTop: 40 },
-  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
+  centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   loadingText: { marginTop: 10, color: '#666', fontSize: 16 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 10 },
   searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, paddingHorizontal: 10, marginBottom: 10 },
@@ -194,8 +255,11 @@ const styles = StyleSheet.create({
   chipText: { color: '#555', fontWeight: '600', fontSize: 12 },
   activeChipText: { color: '#fff' },
   sortContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 15, flexWrap: 'wrap' },
-  sortLabel: { fontSize: 12, fontWeight: 'bold', marginRight: 5 },
+  sortLabel: { fontSize: 12, fontWeight: 'bold', marginRight: 5, color: '#444' },
   sortBtn: { paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#eee', borderRadius: 4, marginRight: 5, marginBottom: 5 },
   activeSort: { backgroundColor: '#333' },
-  sortText: { fontSize: 11, color: '#fff' },
+  sortText: { fontSize: 11, color: '#333' },
+  activeSortText: { color: '#fff' },
+  errorText: { color: '#d9534f', fontSize: 14, textAlign: 'center' },
+  emptyText: { color: '#777', fontSize: 14, textAlign: 'center', marginTop: 30 },
 });

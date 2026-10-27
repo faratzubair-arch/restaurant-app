@@ -21,9 +21,10 @@ export default function ReservationScreen({ setActiveScreen }) {
     fetchTables();
   }, []);
 
+  // Fetch available restaurant tables from backend
   const fetchTables = async () => {
     try {
-      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/tables`, {
+      const response = await fetch(`${API_URL}/api/tables`, {
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
@@ -38,15 +39,16 @@ export default function ReservationScreen({ setActiveScreen }) {
     }
   };
 
+  // Submit table reservation form
   const handleBooking = async () => {
     if (!name || !phone || !selectedTable || !selectedDate || !selectedTime) {
-      Alert.alert('Incomplete Form', 'Please fill in all fields (Name, Phone, Table, Date, Time).');
+      Alert.alert('Incomplete Form', 'Please fill in all fields (Full Name, Phone Number, Table, Date, and Time Slot).');
       return;
     }
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/reservations`, {
+      const response = await fetch(`${API_URL}/api/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +67,7 @@ export default function ReservationScreen({ setActiveScreen }) {
       if (response.ok) {
         Alert.alert(
           'Reservation Successful',
-          `Table successfully booked for ${name}! Please check the Status tab to view live updates.`
+          `Table successfully booked for ${name}! Check the Status tab to view live updates.`
         );
         setName('');
         setPhone('');
@@ -81,8 +83,8 @@ export default function ReservationScreen({ setActiveScreen }) {
         Alert.alert('Booking Failed', data.message || 'Unable to complete your reservation.');
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert('Connection Error', 'Failed to connect to the server. Please check your internet connection.');
+      console.error('Booking request error:', err);
+      Alert.alert('Connection Error', 'Failed to connect to the server. Please check your network.');
     } finally {
       setLoading(false);
     }
@@ -98,33 +100,43 @@ export default function ReservationScreen({ setActiveScreen }) {
           style={styles.historyBtn} 
           onPress={() => setActiveScreen('reservationHistory')}
         >
-          <Text style={styles.historyBtnText}>📊 View Live Reservation Status</Text>
+          <Text style={styles.historyBtnText}>View Live Reservation Status</Text>
         </TouchableOpacity>
       )}
 
       <View style={styles.formCard}>
+        {/* Full Name Field */}
+        <Text style={styles.label}>Full Name:</Text>
         <TextInput 
           style={styles.input} 
-          placeholder="Full Name" 
+          placeholder="Enter your full name" 
+          placeholderTextColor="#777"
           value={name} 
           onChangeText={setName} 
         />
 
+        {/* Phone Number Field */}
+        <Text style={styles.label}>Phone Number:</Text>
         <TextInput 
           style={styles.input} 
-          placeholder="Phone Number (e.g. 03001234567)" 
+          placeholder="e.g., 03001234567" 
+          placeholderTextColor="#777"
           value={phone} 
           onChangeText={setPhone} 
           keyboardType="phone-pad"
         />
 
+        {/* Reservation Date Field */}
+        <Text style={styles.label}>Reservation Date:</Text>
         <TextInput 
           style={styles.input} 
-          placeholder="Date (YYYY-MM-DD)" 
+          placeholder="YYYY-MM-DD (e.g., 2026-10-30)" 
+          placeholderTextColor="#777"
           value={selectedDate} 
           onChangeText={setSelectedDate} 
         />
 
+        {/* Table Selection Field */}
         <Text style={styles.label}>Select Table:</Text>
         <View style={styles.slotContainer}>
           {tables.length > 0 ? (
@@ -144,24 +156,35 @@ export default function ReservationScreen({ setActiveScreen }) {
           )}
         </View>
 
+        {/* Guest Count Field */}
         <Text style={styles.label}>Guests: {guests} {guests > 1 ? 'persons' : 'person'}</Text>
         <View style={styles.row}>
           {[2, 4, 6, 8].map(num => (
-            <TouchableOpacity key={num} style={[styles.chip, guests === num && styles.activeChip]} onPress={() => setGuests(num)}>
+            <TouchableOpacity 
+              key={num} 
+              style={[styles.chip, guests === num && styles.activeChip]} 
+              onPress={() => setGuests(num)}
+            >
               <Text style={[styles.chipText, guests === num && styles.activeChipText]}>{num}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
+        {/* Time Slot Field */}
         <Text style={styles.label}>Time Slot:</Text>
         <View style={styles.slotContainer}>
           {timeSlots.map(slot => (
-            <TouchableOpacity key={slot} style={[styles.slot, selectedTime === slot && styles.activeSlot]} onPress={() => setSelectedTime(slot)}>
+            <TouchableOpacity 
+              key={slot} 
+              style={[styles.slot, selectedTime === slot && styles.activeSlot]} 
+              onPress={() => setSelectedTime(slot)}
+            >
               <Text style={[styles.slotText, selectedTime === slot && styles.activeSlotText]}>{slot}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
+        {/* Submission Button */}
         <TouchableOpacity style={styles.bookButton} onPress={handleBooking} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.bookText}>Confirm Reservation</Text>}
         </TouchableOpacity>
@@ -172,12 +195,12 @@ export default function ReservationScreen({ setActiveScreen }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fdfbf7', padding: 20, paddingTop: 40 },
-  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 15 },
+  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 15, color: '#333' },
   historyBtn: { backgroundColor: '#0275d8', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
   historyBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
-  formCard: { backgroundColor: '#fff', padding: 15, borderRadius: 10, elevation: 2 },
-  input: { height: 45, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, paddingHorizontal: 10, marginBottom: 12, backgroundColor: '#fafafa' },
-  label: { fontSize: 14, fontWeight: '600', color: '#444', marginBottom: 8 },
+  formCard: { backgroundColor: '#fff', padding: 16, borderRadius: 10, elevation: 2 },
+  label: { fontSize: 14, fontWeight: '700', color: '#333', marginBottom: 6, marginTop: 4 },
+  input: { height: 46, borderWidth: 1, borderColor: '#bbb', borderRadius: 8, paddingHorizontal: 12, marginBottom: 14, backgroundColor: '#fafafa', fontSize: 14, color: '#111' },
   row: { flexDirection: 'row', marginBottom: 15 },
   chip: { paddingHorizontal: 15, paddingVertical: 8, backgroundColor: '#eee', borderRadius: 20, marginRight: 8 },
   activeChip: { backgroundColor: '#d9534f' },
@@ -189,6 +212,6 @@ const styles = StyleSheet.create({
   slotText: { color: '#333' },
   activeSlotText: { color: '#fff', fontWeight: 'bold' },
   noTableText: { fontSize: 13, color: '#888', fontStyle: 'italic', marginBottom: 10 },
-  bookButton: { backgroundColor: '#5cb85c', padding: 12, borderRadius: 8, alignItems: 'center' },
+  bookButton: { backgroundColor: '#5cb85c', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
   bookText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });

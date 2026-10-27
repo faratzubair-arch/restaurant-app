@@ -11,14 +11,15 @@ export default function OrderHistoryScreen() {
 
   const { token, API_URL } = useAuth();
 
+  // Fetch current user order history from backend
   const fetchOrders = async () => {
     try {
       setError(null);
-      // Customer ke apne orders fetch karne ke liye /api/orders/my use karein
-      const response = await fetch(`${API_URL || 'https://nursing-grandson-dimmer.ngrok-free.dev'}/api/orders/my`, {
+      const response = await fetch(`${API_URL}/api/orders/my`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -27,11 +28,11 @@ export default function OrderHistoryScreen() {
       if (response.ok) {
         setOrders(data);
       } else {
-        setError(data.message || 'Orders load karne mein masla aaya.');
+        setError(data.message || 'Failed to load order history.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Server se connection nahi ho saka.');
+      console.error('Fetch orders error:', err);
+      setError('Unable to connect to the server. Please check your network.');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -41,19 +42,19 @@ export default function OrderHistoryScreen() {
   useEffect(() => {
     fetchOrders();
 
-    // Assignment requirement: Polling every 10 seconds for real-time status update
+    // Poll every 10 seconds for real-time order status updates
     const interval = setInterval(() => {
       fetchOrders();
     }, 10000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#d9534f" />
-        <Text style={styles.loadingText}>Loading Your Orders...</Text>
+        <Text style={styles.loadingText}>Loading your orders...</Text>
       </View>
     );
   }
@@ -68,39 +69,57 @@ export default function OrderHistoryScreen() {
         </View>
       ) : orders.length === 0 ? (
         <View style={styles.centerContainer}>
-          <Text style={styles.emptyText}>Aapne abhi tak koi order place nahi kiya.</Text>
+          <Text style={styles.emptyText}>You have not placed any orders yet.</Text>
         </View>
       ) : (
         <FlatList
           data={orders}
           keyExtractor={(item) => item._id}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchOrders(); }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setRefreshing(true);
+                fetchOrders();
+              }}
+            />
+          }
           renderItem={({ item }) => (
             <View style={styles.orderCard}>
               <View style={styles.orderHeader}>
                 <Text style={styles.orderId}>Order ID: {item._id.slice(-6)}</Text>
-                <Text style={[styles.status, item.status === 'Pending' ? styles.pending : styles.success]}>
+                <Text
+                  style={[
+                    styles.status,
+                    item.status === 'Pending' ? styles.pending : styles.success,
+                  ]}
+                >
                   {item.status || 'Pending'}
                 </Text>
               </View>
 
               <View style={styles.itemsList}>
-                {/* Backend model field name is orderItems */}
-                {item.orderItems && item.orderItems.map((ordItem, index) => (
-                  <View key={index} style={styles.itemRow}>
-                    <Text style={styles.itemName}>
-                      {ordItem.menuItem?.name || 'Food Item'} x {ordItem.quantity}
-                    </Text>
-                    <Text style={styles.itemPrice}>Rs. {ordItem.price * ordItem.quantity}</Text>
-                  </View>
-                ))}
+                {item.orderItems &&
+                  item.orderItems.map((ordItem, index) => (
+                    <View key={index} style={styles.itemRow}>
+                      <Text style={styles.itemName}>
+                        {ordItem.menuItem?.name || 'Food Item'} x {ordItem.quantity}
+                      </Text>
+                      <Text style={styles.itemPrice}>
+                        Rs. {ordItem.price * ordItem.quantity}
+                      </Text>
+                    </View>
+                  ))}
               </View>
 
               <View style={styles.orderFooter}>
                 <Text style={styles.dateText}>
-                  {new Date(item.createdAt).toLocaleDateString()} {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(item.createdAt).toLocaleDateString()}{' '}
+                  {new Date(item.createdAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </Text>
-                {/* Backend model field name is totalPrice */}
                 <Text style={styles.totalText}>Total: Rs. {item.totalPrice}</Text>
               </View>
             </View>
