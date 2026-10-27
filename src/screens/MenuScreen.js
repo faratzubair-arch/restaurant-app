@@ -10,6 +10,7 @@ import {
   RefreshControl,
   TextInput,
   Alert,
+  ScrollView,
 } from 'react-native';
 import MenuItemCard from '../components/MenuItemCard';
 import { useCart } from '../context/CartContext';
@@ -103,8 +104,8 @@ export default function MenuScreen() {
       const query = searchText.toLowerCase();
       result = result.filter(
         (item) =>
-          item.name.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query)
+          item.name?.toLowerCase().includes(query) ||
+          item.description?.toLowerCase().includes(query)
       );
     }
 
@@ -134,35 +135,41 @@ export default function MenuScreen() {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Restaurant Menu</Text>
 
+      {/* Search Input */}
       <View style={styles.searchContainer}>
         <TextInput
           ref={searchInputRef}
           style={styles.searchInput}
           placeholder="Search items..."
+          placeholderTextColor="#777"
           value={searchText}
           onChangeText={setSearchText}
         />
       </View>
 
-      <View style={styles.categoryContainer}>
-        {categories.map((cat) => (
-          <TouchableOpacity
-            key={cat}
-            style={[styles.chip, selectedCategory === cat && styles.activeChip]}
-            onPress={() => setSelectedCategory(cat)}
-          >
-            <Text
-              style={[
-                styles.chipText,
-                selectedCategory === cat && styles.activeChipText,
-              ]}
+      {/* Categories Scrollable */}
+      <View style={{ marginBottom: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContainer}>
+          {categories.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              style={[styles.chip, selectedCategory === cat && styles.activeChip]}
+              onPress={() => setSelectedCategory(cat)}
             >
-              {cat}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.chipText,
+                  selectedCategory === cat && styles.activeChipText,
+                ]}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
+      {/* Sorting Buttons */}
       <View style={styles.sortContainer}>
         <Text style={styles.sortLabel}>Sort By:</Text>
         <TouchableOpacity
@@ -246,20 +253,20 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fdfbf7', padding: 15, paddingTop: 40 },
   centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   loadingText: { marginTop: 10, color: '#666', fontSize: 16 },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 10 },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, paddingHorizontal: 10, marginBottom: 10 },
-  searchInput: { flex: 1, height: 40 },
-  categoryContainer: { flexDirection: 'row', marginBottom: 10 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, backgroundColor: '#f0e6d2', borderRadius: 20, marginRight: 8 },
+  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#222', marginBottom: 12 },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#bbb', borderRadius: 8, paddingHorizontal: 12, marginBottom: 12 },
+  searchInput: { flex: 1, height: 44, color: '#111', fontSize: 14 },
+  categoryContainer: { flexDirection: 'row', paddingVertical: 2 },
+  chip: { paddingHorizontal: 14, paddingVertical: 7, backgroundColor: '#f0e6d2', borderRadius: 20, marginRight: 8 },
   activeChip: { backgroundColor: '#d9534f' },
   chipText: { color: '#555', fontWeight: '600', fontSize: 12 },
   activeChipText: { color: '#fff' },
   sortContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 15, flexWrap: 'wrap' },
-  sortLabel: { fontSize: 12, fontWeight: 'bold', marginRight: 5, color: '#444' },
-  sortBtn: { paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#eee', borderRadius: 4, marginRight: 5, marginBottom: 5 },
+  sortLabel: { fontSize: 12, fontWeight: 'bold', marginRight: 6, color: '#444' },
+  sortBtn: { paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#eee', borderRadius: 6, marginRight: 6, marginBottom: 5 },
   activeSort: { backgroundColor: '#333' },
-  sortText: { fontSize: 11, color: '#333' },
-  activeSortText: { color: '#fff' },
+  sortText: { fontSize: 12, color: '#333' },
+  activeSortText: { color: '#fff', fontWeight: '600' },
   errorText: { color: '#d9534f', fontSize: 14, textAlign: 'center' },
   emptyText: { color: '#777', fontSize: 14, textAlign: 'center', marginTop: 30 },
 });

@@ -110,7 +110,7 @@ export default function ReservationScreen({ setActiveScreen }) {
         <TextInput 
           style={styles.input} 
           placeholder="Enter your full name" 
-          placeholderTextColor="#777"
+          placeholderTextColor="#555555"
           value={name} 
           onChangeText={setName} 
         />
@@ -120,7 +120,7 @@ export default function ReservationScreen({ setActiveScreen }) {
         <TextInput 
           style={styles.input} 
           placeholder="e.g., 03001234567" 
-          placeholderTextColor="#777"
+          placeholderTextColor="#555555"
           value={phone} 
           onChangeText={setPhone} 
           keyboardType="phone-pad"
@@ -131,7 +131,7 @@ export default function ReservationScreen({ setActiveScreen }) {
         <TextInput 
           style={styles.input} 
           placeholder="YYYY-MM-DD (e.g., 2026-10-30)" 
-          placeholderTextColor="#777"
+          placeholderTextColor="#555555"
           value={selectedDate} 
           onChangeText={setSelectedDate} 
         />
@@ -195,23 +195,34 @@ export default function ReservationScreen({ setActiveScreen }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fdfbf7', padding: 20, paddingTop: 40 },
-  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 15, color: '#333' },
+  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 15, color: '#111111' },
   historyBtn: { backgroundColor: '#0275d8', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
-  historyBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
-  formCard: { backgroundColor: '#fff', padding: 16, borderRadius: 10, elevation: 2 },
-  label: { fontSize: 14, fontWeight: '700', color: '#333', marginBottom: 6, marginTop: 4 },
-  input: { height: 46, borderWidth: 1, borderColor: '#bbb', borderRadius: 8, paddingHorizontal: 12, marginBottom: 14, backgroundColor: '#fafafa', fontSize: 14, color: '#111' },
+  historyBtnText: { color: '#ffffff', fontWeight: 'bold', fontSize: 14 },
+  formCard: { backgroundColor: '#ffffff', padding: 16, borderRadius: 10, elevation: 2, borderWidth: 1, borderColor: '#e5e5e5' },
+  label: { fontSize: 14, fontWeight: 'bold', color: '#111111', marginBottom: 6, marginTop: 6 },
+  input: { 
+    height: 48, 
+    borderWidth: 1.2, 
+    borderColor: '#222222', 
+    borderRadius: 8, 
+    paddingHorizontal: 12, 
+    marginBottom: 14, 
+    backgroundColor: '#ffffff', 
+    fontSize: 15, 
+    color: '#000000', 
+    fontWeight: '500' 
+  },
   row: { flexDirection: 'row', marginBottom: 15 },
-  chip: { paddingHorizontal: 15, paddingVertical: 8, backgroundColor: '#eee', borderRadius: 20, marginRight: 8 },
-  activeChip: { backgroundColor: '#d9534f' },
-  chipText: { fontWeight: 'bold', color: '#555' },
-  activeChipText: { color: '#fff' },
+  chip: { paddingHorizontal: 16, paddingVertical: 8, backgroundColor: '#eeeeee', borderRadius: 20, marginRight: 8, borderWidth: 1, borderColor: '#222222' },
+  activeChip: { backgroundColor: '#d9534f', borderColor: '#d9534f' },
+  chipText: { fontWeight: 'bold', color: '#111111' },
+  activeChipText: { color: '#ffffff' },
   slotContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 15 },
-  slot: { paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: '#ccc', borderRadius: 6, marginRight: 8, marginBottom: 8 },
+  slot: { paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1.2, borderColor: '#222222', borderRadius: 6, marginRight: 8, marginBottom: 8, backgroundColor: '#ffffff' },
   activeSlot: { backgroundColor: '#d9534f', borderColor: '#d9534f' },
-  slotText: { color: '#333' },
-  activeSlotText: { color: '#fff', fontWeight: 'bold' },
-  noTableText: { fontSize: 13, color: '#888', fontStyle: 'italic', marginBottom: 10 },
-  bookButton: { backgroundColor: '#5cb85c', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  bookText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  slotText: { color: '#111111', fontWeight: '500' },
+  activeSlotText: { color: '#ffffff', fontWeight: 'bold' },
+  noTableText: { fontSize: 13, color: '#666666', fontStyle: 'italic', marginBottom: 10 },
+  bookButton: { backgroundColor: '#5cb85c', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  bookText: { color: '#ffffff', fontSize: 16, fontWeight: 'bold' },
 });

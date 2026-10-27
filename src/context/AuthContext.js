@@ -1,27 +1,18 @@
+// src/context/AuthContext.js
 import React, { createContext, useState, useContext } from 'react';
-import Constants from 'expo-constants';
-import { setAuthToken } from '../api/client'; // Sahi folder path
+import { setAuthToken } from '../api/client';
 
 const AuthContext = createContext();
 
-// Auto-detect IP address chahe aap ghar hon ya university
-const getBaseUrl = () => {
-  const debuggerHost = Constants.expoConfig?.hostUri || Constants.manifest?.debuggerHost;
-  if (debuggerHost) {
-    const ip = debuggerHost.split(':')[0];
-    return `http://${ip}:5000`;
-  }
-  return 'https://nursing-grandson-dimmer.ngrok-free.dev'; // Web ya default ke liye
-};
-
-const API_URL = getBaseUrl();
+// Production Vercel Backend URL
+const API_URL = 'https://restaurant-backend-neon-two.vercel.app';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Login function jo backend API ko call karegi
+  // Authenticate existing user
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -41,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data);
       setToken(data.token);
-      setAuthToken(data.token); // Token ko client file mein set kar diya
+      await setAuthToken(data.token);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.message };
@@ -50,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Signup function jo backend API ko call karegi
+  // Register new user account
   const signup = async (name, email, password, role) => {
     try {
       setLoading(true);
@@ -70,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data);
       setToken(data.token);
-      setAuthToken(data.token); // Token ko client file mein set kar diya
+      await setAuthToken(data.token);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.message };
@@ -79,14 +70,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  // Clear session state
+  const logout = async () => {
     setUser(null);
     setToken(null);
-    setAuthToken(null); // Logout par token clear kar dein
+    await setAuthToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, API_URL, login, signup, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

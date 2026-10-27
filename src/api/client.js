@@ -1,11 +1,12 @@
+// src/api/client.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let authToken = null;
 
-// Localtunnel URL ke sath /api add kiya hai
-const BASE_URL = 'https://nursing-grandson-dimmer.ngrok-free.dev/api';
+// Production Vercel Backend URL
+const BASE_URL = 'https://restaurant-backend-neon-two.vercel.app/api';
 
-// Token set aur AsyncStorage mein save karne ke liye function
+// Store and update authentication token in memory and persistent storage
 export const setAuthToken = async (token) => {
   authToken = token;
   if (token) {
@@ -15,15 +16,15 @@ export const setAuthToken = async (token) => {
   }
 };
 
+// Centralized API request wrapper
 export const apiRequest = async (endpoint, method = 'GET', body = null, requiresAuth = false) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
-      'Bypass-Tunnel-Reminder': 'true', // Localtunnel warning bypass karne ke liye zaroori
     };
 
     if (requiresAuth) {
-      // Agar memory mein token nahi hai, toh AsyncStorage se utha lein
+      // Retrieve token from AsyncStorage if not present in memory
       if (!authToken) {
         authToken = await AsyncStorage.getItem('authToken');
       }

@@ -12,9 +12,10 @@ export default function ReservationHistoryScreen() {
   const { token, API_URL } = useAuth();
 
   // Fetch current user's reservations from backend
-  const fetchReservations = async () => {
+  const fetchReservations = async (isBackground = false) => {
     try {
-      setError(null);
+      if (!isBackground) setError(null);
+      
       const response = await fetch(`${API_URL}/api/reservations/my`, {
         method: 'GET',
         headers: {
@@ -28,11 +29,15 @@ export default function ReservationHistoryScreen() {
       if (response.ok) {
         setReservations(data);
       } else {
-        setError(data.message || 'Failed to load reservations.');
+        if (!isBackground) {
+          setError(data.message || 'Failed to load reservations.');
+        }
       }
     } catch (err) {
       console.error('Fetch reservations error:', err);
-      setError('Unable to connect to the server. Please check your network.');
+      if (!isBackground) {
+        setError('Unable to connect to the server. Please check your network.');
+      }
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -40,11 +45,11 @@ export default function ReservationHistoryScreen() {
   };
 
   useEffect(() => {
-    fetchReservations();
+    fetchReservations(false);
 
-    // Poll every 10 seconds to update live reservation status (Confirmed / Declined)
+    // Poll every 10 seconds to update live reservation status without UI flicker
     const interval = setInterval(() => {
-      fetchReservations();
+      fetchReservations(true);
     }, 10000);
 
     // Clean up interval on component unmount
@@ -81,7 +86,7 @@ export default function ReservationHistoryScreen() {
               refreshing={refreshing}
               onRefresh={() => {
                 setRefreshing(true);
-                fetchReservations();
+                fetchReservations(false);
               }}
             />
           }
@@ -89,21 +94,32 @@ export default function ReservationHistoryScreen() {
             <View style={styles.card}>
               <View style={styles.header}>
                 <Text style={styles.tableText}>Table #{item.tableNumber}</Text>
-                <Text
+                <View
                   style={[
-                    styles.status,
+                    styles.statusBadge,
                     item.status === 'Confirmed'
-                      ? styles.success
+                      ? styles.successBadge
                       : item.status === 'Declined'
-                      ? styles.danger
-                      : styles.pending,
+                      ? styles.dangerBadge
+                      : styles.pendingBadge,
                   ]}
                 >
-                  {item.status || 'Pending'}
-                </Text>
+                  <Text
+                    style={[
+                      styles.statusText,
+                      item.status === 'Confirmed'
+                        ? styles.successText
+                        : item.status === 'Declined'
+                        ? styles.dangerText
+                        : styles.pendingText,
+                    ]}
+                  >
+                    {item.status || 'Pending'}
+                  </Text>
+                </View>
               </View>
               <Text style={styles.details}>Date: {item.date} | Time: {item.time}</Text>
-              <Text style={styles.details}>Guests: {item.guests} Persons</Text>
+              <Text style={styles.details}>Guests: {item.guests} {item.guests > 1 ? 'Persons' : 'Person'}</Text>
             </View>
           )}
         />
@@ -113,17 +129,21 @@ export default function ReservationHistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fdfbf7', padding: 15, paddingTop: 40 },
+  container: { flex: 1, backgroundColor: '#fdfbf7', padding: 16, paddingTop: 40 },
   centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   loadingText: { marginTop: 10, color: '#666', fontSize: 16 },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: 15, textAlign: 'center' },
-  card: { backgroundColor: '#fff', borderRadius: 10, padding: 15, marginBottom: 15, borderWidth: 1, borderColor: '#eee' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  title: { fontSize: 22, fontWeight: 'bold', color: '#222', marginBottom: 16, textAlign: 'center' },
+  card: { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 12, elevation: 1, borderWidth: 1, borderColor: '#eee' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   tableText: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-  status: { fontSize: 12, fontWeight: 'bold', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 },
-  pending: { backgroundColor: '#fff3cd', color: '#856404' },
-  success: { backgroundColor: '#d4edda', color: '#155724' },
-  danger: { backgroundColor: '#f8d7da', color: '#721c24' },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, overflow: 'hidden' },
+  statusText: { fontSize: 12, fontWeight: 'bold' },
+  pendingBadge: { backgroundColor: '#fff3cd' },
+  pendingText: { color: '#856404' },
+  successBadge: { backgroundColor: '#d4edda' },
+  successText: { color: '#155724' },
+  dangerBadge: { backgroundColor: '#f8d7da' },
+  dangerText: { color: '#721c24' },
   details: { fontSize: 14, color: '#555', marginBottom: 4 },
   errorText: { color: '#d9534f', fontSize: 14, textAlign: 'center' },
   emptyText: { color: '#666', fontSize: 14, textAlign: 'center' },
