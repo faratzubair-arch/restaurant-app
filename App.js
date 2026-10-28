@@ -1,6 +1,6 @@
 // App.js
 import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Platform } from 'react-native';
 
 // Context Providers
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -15,7 +15,7 @@ import ReservationScreen from './src/screens/ReservationScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import ManagerDashboard from './src/screens/ManagerDashboard';
 import OrderHistoryScreen from './src/screens/OrderHistoryScreen';
-import ReservationHistoryScreen from './src/screens/ReservationHistoryScreen'; // 1. ReservationHistoryScreen import kiya
+import ReservationHistoryScreen from './src/screens/ReservationHistoryScreen';
 
 function MainNavigator() {
   const { user } = useAuth();
@@ -41,32 +41,58 @@ function MainNavigator() {
         {activeScreen === 'menu' && <MenuScreen />}
         {activeScreen === 'cart' && <OrderSummaryScreen />}
         {activeScreen === 'reservation' && <ReservationScreen setActiveScreen={setActiveScreen} />} 
-        {activeScreen === 'reservationHistory' && <ReservationHistoryScreen />} {/* Live Table Status Screen */}
+        {activeScreen === 'reservationHistory' && <ReservationHistoryScreen />}
         {activeScreen === 'profile' && <ProfileScreen setActiveScreen={setActiveScreen} />}  
         {activeScreen === 'orderHistory' && <OrderHistoryScreen />}  
       </View>
 
       {/* Bottom Navigation Bar for Customer */}
-      <View style={[styles.navBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('menu')}>
-          <Text style={styles.navText}>🍽️ Menu</Text>
+      <View style={[styles.navBar, { backgroundColor: '#ffffff', borderTopColor: '#e0e0e0' }]}>
+        <TouchableOpacity 
+          style={[styles.navItem, activeScreen === 'menu' && styles.activeNavItem]} 
+          onPress={() => setActiveScreen('menu')}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.navText, activeScreen === 'menu' && styles.activeNavText]}>🍽️ Menu</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('cart')}>
-          <Text style={styles.navText}>🛒 Cart ({items.reduce((sum, i) => sum + i.quantity, 0)})</Text>
+        <TouchableOpacity 
+          style={[styles.navItem, activeScreen === 'cart' && styles.activeNavItem]} 
+          onPress={() => setActiveScreen('cart')}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.navText, activeScreen === 'cart' && styles.activeNavText]}>
+            🛒 Cart ({items.reduce((sum, i) => sum + i.quantity, 0)})
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('reservation')}>
-          <Text style={styles.navText}>📅 Table</Text>
+        <TouchableOpacity 
+          style={[styles.navItem, activeScreen === 'reservation' && styles.activeNavItem]} 
+          onPress={() => setActiveScreen('reservation')}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.navText, activeScreen === 'reservation' && styles.activeNavText]}>📅 Table</Text>
         </TouchableOpacity>
 
-        {/* Live Reservation & Order History ke liye button */}
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('reservationHistory')}>
-          <Text style={styles.navText}>📊 Status</Text>
+        <TouchableOpacity 
+          style={[styles.navItem, activeScreen === 'reservationHistory' && styles.activeNavItem]} 
+          onPress={() => setActiveScreen('reservationHistory')}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.navText, activeScreen === 'reservationHistory' && styles.activeNavText]}>📊 Status</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveScreen('profile')}>
-          <Text style={styles.navText}>👤 Profile</Text>
+        <TouchableOpacity 
+          style={[styles.navItem, activeScreen === 'profile' && styles.activeNavItem]} 
+          onPress={() => setActiveScreen('profile')}
+          hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.navText, activeScreen === 'profile' && styles.activeNavText]}>👤 Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -90,20 +116,37 @@ const styles = StyleSheet.create({
   screenContainer: { flex: 1 },
   navBar: {
     flexDirection: 'row',
-    height: 60,
-    borderTopWidth: 1,
+    height: Platform.OS === 'ios' ? 82 : 72,
+    borderTopWidth: 1.2,
     justifyContent: 'space-around',
     alignItems: 'center',
-    elevation: 10,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 14,
+    paddingTop: 8,
+    backgroundColor: '#ffffff',
+    elevation: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   navItem: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    height: '100%',
+    borderRadius: 8,
+    marginHorizontal: 2,
+  },
+  activeNavItem: {
+    backgroundColor: '#f3f4f6',
   },
   navText: {
-    fontSize: 11,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#555555',
+  },
+  activeNavText: {
     color: '#d9534f',
+    fontWeight: 'bold',
   },
 });

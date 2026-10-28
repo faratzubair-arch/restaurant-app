@@ -91,7 +91,12 @@ export default function ReservationScreen({ setActiveScreen }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={true}
+    >
       <Text style={styles.title}>Book a Table</Text>
 
       {/* Live Status Check Button */}
@@ -194,7 +199,15 @@ export default function ReservationScreen({ setActiveScreen }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fdfbf7', padding: 20, paddingTop: 40 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#fdfbf7' 
+  },
+  scrollContent: { 
+    padding: 20, 
+    paddingTop: 40, 
+    paddingBottom: 140 // Extra space taake button bottom navigation bar ke upar pura scroll ho sake
+  },
   title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 15, color: '#111111' },
   historyBtn: { backgroundColor: '#0275d8', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
   historyBtnText: { color: '#ffffff', fontWeight: 'bold', fontSize: 14 },
@@ -223,6 +236,6 @@ const styles = StyleSheet.create({
   slotText: { color: '#111111', fontWeight: '500' },
   activeSlotText: { color: '#ffffff', fontWeight: 'bold' },
   noTableText: { fontSize: 13, color: '#666666', fontStyle: 'italic', marginBottom: 10 },
-  bookButton: { backgroundColor: '#5cb85c', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  bookButton: { backgroundColor: '#5cb85c', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 14 },
   bookText: { color: '#ffffff', fontSize: 16, fontWeight: 'bold' },
 });

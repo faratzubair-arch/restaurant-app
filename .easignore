@@ -1,0 +1,12 @@
+﻿ngrok.exe
+ngrok.zip
+*.exe
+*.zip
+server/
+A1 screnshots/
+A2/
+.git
+node_modules
+.expo
+dist
+web-build
